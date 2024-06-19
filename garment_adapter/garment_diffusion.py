@@ -38,7 +38,8 @@ class ClothAdapter:
         self.attn_store = {}
 
     def set_seg_model(self, ):
-        checkpoint_path = folder_paths.get_full_path("magic_cloth_checkpoint", "cloth_segm.pth") #'checkpoints/cloth_segm.pth'
+        checkpoint_path = folder_paths.get_full_path("checkpoints", "cloth_segm.pth") #'checkpoints/cloth_segm.pth'
+        print(checkpoint_path)
         self.seg_net = load_seg_model(checkpoint_path, device=self.device)
 
     def set_adapter(self, unet, type):
