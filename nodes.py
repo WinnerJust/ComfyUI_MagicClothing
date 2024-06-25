@@ -101,7 +101,13 @@ class ClothInpainting:
         control_img = make_inpaint_condition(person_image,person_mask)
         a_prompt = 'best quality, high quality'
         images, cloth_mask_image = full_net.generate(cloth_image, cloth_mask_image, kwargs['prompt'], a_prompt, kwargs['num_samples'], kwargs['negative_prompt'], kwargs['seed'], kwargs['guidance_scale'], kwargs['cloth_guidance_scale'], kwargs['sample_steps'], kwargs['height'], kwargs['width'], image=person_image,mask_image=person_mask,control_image=control_img)
-        images = np.array(images).astype(np.float32) / 255.0
+        
+        if isinstance(images, list):
+            images = [np.array(img).astype(np.float32) / 255.0 for img in images]
+            images = np.stack(images, axis=0)
+        else:
+            images = np.array(images).astype(np.float32) / 255.0
+        
         images = torch.from_numpy(images)
         return (images,)
 
@@ -300,7 +306,12 @@ class GarmentGenerate:
             full_net = ClothAdapter(pipe, folder_paths.get_full_path("magic_cloth_checkpoint", model_path), device, enable_cloth_guidance)
             images, cloth_mask_image = full_net.generate(cloth_image, cloth_mask_image, prompt, a_prompt, num_samples, n_prompt, seed, scale, cloth_guidance_scale, sample_steps, height, width)
                     
-        images = np.array(images).astype(np.float32) / 255.0
+        if isinstance(images, list):
+            images = [np.array(img).astype(np.float32) / 255.0 for img in images]
+            images = np.stack(images, axis=0)
+        else:
+            images = np.array(images).astype(np.float32) / 255.0
+            
         images = torch.from_numpy(images)
         cloth_mask_image = np.array(cloth_mask_image).astype(np.float32) / 255.0
         cloth_mask_image = torch.unsqueeze(torch.from_numpy(cloth_mask_image), 0)
